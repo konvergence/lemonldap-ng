@@ -1,0 +1,56 @@
+
+# define AD for authenticatio, userDB and passwordDB
+
+/usr/share/lemonldap-ng/bin/lemonldap-ng-cli -yes 1 \
+set \
+  ldapServer '${LDAP_URL}' \
+  ldapPort '${LDAP_PORT}' \
+  ldapVersion '3' \
+  ldapBase '${LDAP_BASE}' \
+  ldapAuthnLevel '2' \
+  ldapUsePasswordResetAttribute '1' \
+  ldapTimeout '120' \
+  ldapSetPassword '0' \
+  ldapSearchDeref 'find' \
+  ldapPwdEnc 'utf-8' \
+  ldapPpolicyControl '0' \
+  ldapPasswordResetAttributeValue 'TRUE' \
+  ldapPasswordResetAttribute 'pwdReset' \
+  managerDn '${LDAP_BINDDN}' \
+  managerPassword '${LDAP_BINDPWD}' \
+  AuthLDAPFilter '(&(objectClass=user)(${LDAP_ATTR_LOGIN}=$user))' \
+  authentication 'AD' \
+  userDB 'AD' \
+  passwordDB 'AD'
+
+# define Exported Variables attributs from AD
+
+/usr/share/lemonldap-ng/bin/lemonldap-ng-cli -yes 1 \
+addKey \
+  ldapExportedVars group group \
+  ldapExportedVars mail mail \
+  ldapExportedVars cn cn \
+  ldapExportedVars sn sn \
+  ldapExportedVars givenName givenName \
+  ldapExportedVars uid ${LDAP_ATTR_LOGIN}
+
+
+# define group attributs for search
+
+/usr/share/lemonldap-ng/bin/lemonldap-ng-cli -yes 1 \
+set \
+  ldapGroupAttributeName 'member' \
+  ldapGroupAttributeNameGroup 'dn' \
+  ldapGroupAttributeNameSearch 'cn' \
+  ldapGroupAttributeNameUser 'dn' \
+  ldapGroupBase '${LDAP_BASE}' \
+  ldapGroupObjectClass 'group' \
+  ldapGroupRecursive '1'
+  
+# delete default rules access on virtual host manager
+#/usr/share/lemonldap-ng/bin/lemonldap-ng-cli delKey locationRules/${MANAGER_URI} 'default' locationRules/${MANAGER_URI} '(?#Configuration)^/(manager\.html|confs|$)' locationRules/${MANAGER_URI} '(?#Notifications)/notifications' locationRules/${MANAGER_URI} '(?#Sessions)/sessions'
+
+# define  rules access on virtual host manager for "${LLNG_UID_ADMIN}" or ${LLNG_GROUP_ADMIN}
+/usr/share/lemonldap-ng/bin/lemonldap-ng-cli -yes 1 addKey locationRules/${MANAGER_URI} 'default' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/' 'locationRules/${MANAGER_URI}' '(?#Configuration)^/(manager\.html|confs|$)' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/' locationRules/${MANAGER_URI} '(?#Notifications)/notifications' '$uid eq "${LLNG_UID_ADMIN}"  or $groups =~ /${LLNG_GROUP_ADMIN}/' locationRules/${MANAGER_URI} '(?#Sessions)/sessions' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/'
+
+

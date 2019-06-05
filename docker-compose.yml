@@ -1,0 +1,34 @@
+version: '2'
+volumes:
+  lemonldapng-conf: {}
+  lemonldapng-etc: {}
+#  lemonldapng-var: {}
+services:
+  lemonldapng:
+#    image: konvergence/lemonldap-ng
+    build:
+      context: .
+      dockerfile: lemonldap-ng-v2.0.dockerfile
+    
+    stdin_open: true
+    
+    extra_hosts:
+       - "reload.example.com:127.0.0.1"
+ 
+    environment:
+      SSODOMAIN: example.com
+      PORTAL_URI: auth.example.com
+      MANAGER_URI: manager.example.com
+      RELOAD_URI: reload.example.com
+
+      
+    volumes:
+    - lemonldapng-conf:/var/lib/lemonldap-ng/conf
+    - lemonldapng-etc:/etc/lemonldap-ng
+#    - lemonldapng-var:/var/lib/lemonldap-ng
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+
+    ports:
+     - "443:443"
