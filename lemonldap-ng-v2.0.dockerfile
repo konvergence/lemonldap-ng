@@ -16,8 +16,8 @@ ARG TINI_VERSION="v0.18.0"
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
-
-ARG LLPNG_VERSION="2.0.4-1"
+#  apt-cache madison lemonldap-ng
+ARG LLPNG_VERSION="2.0.7-1"
 
 # install perl and apache2
 RUN apt-get update \
@@ -61,4 +61,3 @@ VOLUME [ "/var/lib/lemonldap-ng/conf", "/etc/lemonldap-ng" ]
 
 ENTRYPOINT [ "/tini", "--", "bash", "/docker-entrypoint.sh" ]
 CMD [ "/usr/sbin/apache2ctl", "-D", "FOREGROUND" ]
-

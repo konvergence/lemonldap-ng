@@ -2,6 +2,7 @@ version: '2'
 volumes:
   lemonldapng-conf: {}
   lemonldapng-etc: {}
+  lemonldapng-psessions: {}
 #  lemonldapng-var: {}
 services:
   lemonldapng:
@@ -23,6 +24,7 @@ services:
 
       
     volumes:
+    - lemonldapng-psessions:/var/lib/lemonldap-ng/psessions
     - lemonldapng-conf:/var/lib/lemonldap-ng/conf
     - lemonldapng-etc:/etc/lemonldap-ng
 #    - lemonldapng-var:/var/lib/lemonldap-ng
