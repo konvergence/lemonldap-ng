@@ -35,11 +35,11 @@ if [ ! -d /etc/lemonldap-ng/ori ]; then
     cp /etc/lemonldap-ng/* /etc/lemonldap-ng/ori
 
     sed -i "s/example\.com/${SSODOMAIN}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
-    
+
     # force https if need
     sed -i "s/http:/${HTTPSCHEME}:/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
     sed -i "s/:80/:${HTTPPORT}/g"  /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
-    
+
     #change URI if need
     sed -i "s/auth\.${SSODOMAIN}/${PORTAL_URI}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
     sed -i "s/manager\.${SSODOMAIN}/${MANAGER_URI}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
@@ -52,17 +52,28 @@ if [ ! -d /var/lib/lemonldap-ng/conf/ori ]; then
     mkdir  /var/lib/lemonldap-ng/conf/ori
     cp /var/lib/lemonldap-ng/conf/lmConf-1.js*  /var/lib/lemonldap-ng/conf/ori/
 
-    sed -i "s/example\.com/${SSODOMAIN}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js* 
-    
+    sed -i "s/example\.com/${SSODOMAIN}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
+
     # force https if need
     sed -i "s/http:/${HTTPSCHEME}:/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
     sed -i "s/:80/:${HTTPPORT}/g"  /var/lib/lemonldap-ng/conf/lmConf-1.js*
-    
+
     #change URI if need
     sed -i "s/auth\.${SSODOMAIN}/${PORTAL_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
     sed -i "s/manager\.${SSODOMAIN}/${MANAGER_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
-    sed -i "s/reload\.${SSODOMAIN}/${RELOAD_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js* 
+    sed -i "s/reload\.${SSODOMAIN}/${RELOAD_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
 fi
+
+
+# move logos and background link
+    mkdir -p /var/lib/lemonldap-ng/common
+    mv /usr/share/lemonldap-ng/portal/htdocs/static/common/backgrounds/  /var/lib/lemonldap-ng/common
+    mv /usr/share/lemonldap-ng/portal/htdocs/static/common/logos  /var/lib/lemonldap-ng/common
+    cd /usr/share/lemonldap-ng/portal/htdocs/static/common/ 
+    ln -s /var/lib/lemonldap-ng/common/logos logos
+    ln -s /var/lib/lemonldap-ng/common/backgrounds backgrounds
+
+
 
 if [ "${LDAP_ENABLED}" = "true" ]; then
    echo update config with LDAP
@@ -73,10 +84,10 @@ if [ "${LDAP_ENABLED}" = "true" ]; then
     [ -z "${LDAP_PORT}" ]  && echo error LDAP_PORT not defined && exit -1
     [ -z "${LLNG_GROUP_ADMIN}" ]  && echo error LLNG_GROUP_ADMIN not defined && exit -1
     [ -z "${LLNG_UID_ADMIN}" ] && echo error LLNG_UID_ADMIN not defined && exit -1
-    
-    
+
+
     envsubst '${SSODOMAIN} ${LDAP_ATTR_LOGIN} ${LDAP_BASE} ${LDAP_BINDDN} ${LDAP_BINDPWD} ${LDAP_PORT} ${LDAP_URL} ${LLNG_GROUP_ADMIN} ${LLNG_UID_ADMIN} ${PORTAL_URI} ${MANAGER_URI} ${RELOAD_URI} ${MANAGER_ACLRULE_CONFIGURATION} ${MANAGER_ACLRULE_NOTIFICATION} ${MANAGER_ACLRULE_SESSION}' < /llng-init-conf-ad.dist > /tmp/llng-init-conf-ad.sh
-    
+
     bash /tmp/llng-init-conf-ad.sh
 fi
 
