@@ -47,17 +47,26 @@ RUN echo "# Enable module ssl fcgid perl alias rewrite headers" \
 ##  && a2ensite manager-apache2.conf portal-apache2.conf handler-apache2.conf  test-apache2.conf
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-COPY llng-init-conf-ad.sh /llng-init-conf-ad.sh
 COPY llng-init-conf-ad.dist /llng-init-conf-ad.dist
 
-
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+
+# specific regexp for lemonldap 2.0.7 Access Rule on manager uri
+#  format is (?#Commentary)/(rule)
+ENV LDAP_ENABLED=false \
+    MANAGER_ACLRULE_CONFIGURATION='(?#Configuration)^/(.*?\.(fcgi|psgi)/)?(manager\.html|confs/|$)' \
+    MANAGER_ACLRULE_NOTIFICATION='(?#Notifications)/(.*?\.(fcgi|psgi)/)?notifications' \
+    MANAGER_ACLRULE_SESSION='(?#Sessions)/(.*?\.(fcgi|psgi)/)?sessions'
+
+
+
 WORKDIR /root
 
 
 # Metadata
 EXPOSE 80 443
-VOLUME [ "/var/lib/lemonldap-ng/conf", "/etc/lemonldap-ng" ]
+VOLUME [ "/var/lib/lemonldap-ng", "/etc/lemonldap-ng" ]
 
 ENTRYPOINT [ "/tini", "--", "bash", "/docker-entrypoint.sh" ]
 CMD [ "/usr/sbin/apache2ctl", "-D", "FOREGROUND" ]

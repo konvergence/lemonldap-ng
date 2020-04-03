@@ -1,5 +1,5 @@
 
-# define AD for authenticatio, userDB and passwordDB
+# define AD for authentication, userDB and passwordDB
 
 /usr/share/lemonldap-ng/bin/lemonldap-ng-cli -yes 1 \
 set \
@@ -46,11 +46,23 @@ set \
   ldapGroupBase '${LDAP_BASE}' \
   ldapGroupObjectClass 'group' \
   ldapGroupRecursive '1'
-  
-# delete default rules access on virtual host manager
-#/usr/share/lemonldap-ng/bin/lemonldap-ng-cli delKey locationRules/${MANAGER_URI} 'default' locationRules/${MANAGER_URI} '(?#Configuration)^/(manager\.html|confs|$)' locationRules/${MANAGER_URI} '(?#Notifications)/notifications' locationRules/${MANAGER_URI} '(?#Sessions)/sessions'
 
-# define  rules access on virtual host manager for "${LLNG_UID_ADMIN}" or ${LLNG_GROUP_ADMIN}
-/usr/share/lemonldap-ng/bin/lemonldap-ng-cli -yes 1 addKey locationRules/${MANAGER_URI} 'default' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/' 'locationRules/${MANAGER_URI}' '(?#Configuration)^/(manager\.html|confs|$)' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/' locationRules/${MANAGER_URI} '(?#Notifications)/notifications' '$uid eq "${LLNG_UID_ADMIN}"  or $groups =~ /${LLNG_GROUP_ADMIN}/' locationRules/${MANAGER_URI} '(?#Sessions)/sessions' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/'
 
+## WARNING each regexp is specific by lemonldap-ng
+
+## here the regexp for lemonldap-ng 2.0.7
+#    Configuration rule: '^/(.*?\.(fcgi|psgi)/)?(manager\.html|confs/|$)
+#    Notifications rule: '/(.*?\.(fcgi|psgi)/)?notifications'
+#    Sessions rule:      '/(.*?\.(fcgi|psgi)/)?sessions'
+
+# define  rules access on virt ual host manager for "${LLNG_UID_ADMIN}" or ${LLNG_GROUP_ADMIN}
+
+
+# replace "default" rule
+/usr/share/lemonldap-ng/bin/lemonldap-ng-cli -yes 1 \
+addKey \
+   locationRules/${MANAGER_URI} 'default' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/' \
+   locationRules/${MANAGER_URI} '${MANAGER_ACLRULE_CONFIGURATION}' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/' \
+   locationRules/${MANAGER_URI} '${MANAGER_ACLRULE_NOTIFICATION}' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/' \
+   locationRules/${MANAGER_URI} '${MANAGER_ACLRULE_SESSION}' '$uid eq "${LLNG_UID_ADMIN}" or $groups =~ /${LLNG_GROUP_ADMIN}/'
 
