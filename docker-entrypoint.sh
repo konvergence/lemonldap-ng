@@ -65,15 +65,6 @@ if [ ! -d /var/lib/lemonldap-ng/conf/ori ]; then
 fi
 
 
-# move logos and background link
-    mkdir -p /var/lib/lemonldap-ng/common
-    mv /usr/share/lemonldap-ng/portal/htdocs/static/common/backgrounds/  /var/lib/lemonldap-ng/common
-    mv /usr/share/lemonldap-ng/portal/htdocs/static/common/logos  /var/lib/lemonldap-ng/common
-    cd /usr/share/lemonldap-ng/portal/htdocs/static/common/ 
-    ln -s /var/lib/lemonldap-ng/common/logos logos
-    ln -s /var/lib/lemonldap-ng/common/backgrounds backgrounds
-
-
 
 if [ "${LDAP_ENABLED}" = "true" ]; then
    echo update config with LDAP

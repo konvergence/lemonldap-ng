@@ -49,6 +49,15 @@ RUN echo "# Enable module ssl fcgid perl alias rewrite headers" \
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY llng-init-conf-ad.dist /llng-init-conf-ad.dist
 
+
+RUN  mkdir -p /var/lib/lemonldap-ng/common \
+    && cd /usr/share/lemonldap-ng/portal/htdocs/static/common \
+    && mv backgrounds  /var/lib/lemonldap-ng/common \
+    && mv logos  /var/lib/lemonldap-ng/common \
+    && cd /usr/share/lemonldap-ng/portal/htdocs/static/common/ \
+    && ln -s /var/lib/lemonldap-ng/common/logos logos \
+    && ln -s /var/lib/lemonldap-ng/common/backgrounds backgrounds
+
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 
