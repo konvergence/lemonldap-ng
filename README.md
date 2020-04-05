@@ -5,7 +5,7 @@ official web site :  https://lemonldap-ng.org/welcome/
 
 Add HTTPSCHEME to be able to make SSL Offloading
 
-define following variables on docker-compose.yml to fixe domain and URIs 
+define following variables on docker-compose.yml to fixe domain and URIs
 -    SSODOMAIN=example.com
 -    PORTAL_URI=auth.example.com
 -    MANAGER_URI=manager.example.com
@@ -21,5 +21,6 @@ define following variables to config LDAP authentication
  -   LLNG_GROUP_ADMIN: IAM_Admins
  -   LLNG_UID_ADMIN: rootaccount
 
-
-    then run /llng-init-conf-ad.sh first time
+define following variable to customize logo or background
+ -  CUSTOM_LOGO_URI: https://www.kshuttle.io/static/app/img/logo.svg
+ -  CUSTOM_BACKGROUND_URI: https://www.kshuttle.io/static/app/img/mastheads/flying.jpg

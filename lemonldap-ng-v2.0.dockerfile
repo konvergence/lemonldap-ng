@@ -50,13 +50,25 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY llng-init-conf-ad.dist /llng-init-conf-ad.dist
 
 
-RUN  mkdir -p /var/lib/lemonldap-ng/common \
+RUN  echo "move common/logos and common/backgrounds into /var/lib/lemonldap-ng/common" \
+    && mkdir -p /var/lib/lemonldap-ng/common \
     && cd /usr/share/lemonldap-ng/portal/htdocs/static/common \
     && mv backgrounds  /var/lib/lemonldap-ng/common \
     && mv logos  /var/lib/lemonldap-ng/common \
     && cd /usr/share/lemonldap-ng/portal/htdocs/static/common/ \
     && ln -s /var/lib/lemonldap-ng/common/logos logos \
-    && ln -s /var/lib/lemonldap-ng/common/backgrounds backgrounds
+    && ln -s /var/lib/lemonldap-ng/common/backgrounds backgrounds \
+&& echo create assets \
+   && mkdir -p /usr/share/lemonldap-ng/assets/test \
+   && mkdir -p /usr/share/lemonldap-ng/assets/etc \
+   && mkdir -p /usr/share/lemonldap-ng/assets/conf \
+   && cp -p /var/lib/lemonldap-ng/test/index.pl /usr/share/lemonldap-ng/assets/test \
+   && cp -p /etc/lemonldap-ng/lemonldap-ng.ini /usr/share/lemonldap-ng/assets/etc  \
+   && cp -p /etc/lemonldap-ng/*.conf /usr/share/lemonldap-ng/assets/etc  \
+   && cp -p /var/lib/lemonldap-ng/conf/lmConf-1.json /usr/share/lemonldap-ng/assets/conf \
+   && chown -R www-data:www-data  /usr/share/lemonldap-ng/assets
+
+
 
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 

@@ -14,54 +14,58 @@ else
    sed -i "s/ServerName .*/ServerName $SSODOMAIN/" /etc/apache2/apache2.conf
 fi
 
+
 find /etc/apache2/sites-available/ -name '*.conf' ! -name '000-default.conf'  -exec ln -sf {} /etc/apache2/sites-enabled/ \;
 
 
+echo update /var/lib/lemonldap-ng/test/index.pl
+cp -fp /usr/share/lemonldap-ng/assets/test/index.pl /var/lib/lemonldap-ng/test/index.pl
+sed  -i "s/auth\./$(echo ${PORTAL_URI} | cut -d '.' -f 1)\./g" /var/lib/lemonldap-ng/test/index.pl
+sed  -i "s/manager\./$(echo ${MANAGER_URI}  | cut -d '.' -f 1)\./g" /var/lib/lemonldap-ng/test/index.pl
 
-if [ ! -f /var/lib/lemonldap-ng/test/index.pl.ori ]; then
-    echo update /var/lib/lemonldap-ng/test/index.pl
-    cp /var/lib/lemonldap-ng/test/index.pl /var/lib/lemonldap-ng/test/index.pl.ori
-    sed -i "s/auth\./$(echo ${PORTAL_URI} | cut -d '.' -f 1)\./g" /var/lib/lemonldap-ng/test/index.pl
-    sed -i "s/manager\./$(echo ${MANAGER_URI}  | cut -d '.' -f 1)\./g" /var/lib/lemonldap-ng/test/index.pl
-   # sed -i "s/example\.com/${SSODOMAIN}/g"  /var/lib/lemonldap-ng/test/index.pl
-   # sed -i "s/reload\./$(echo ${RELOAD_URI}  | cut -d '.' -f 1)/g" /var/lib/lemonldap-ng/test/index.pl
+
+echo update /etc/lemonldap-ng/lemonldap-ng.ini and /etc/lemonldap-ng/*.conf
+cp -fp /usr/share/lemonldap-ng/assets/etc/* /etc/lemonldap-ng/
+
+sed -i "s/example\.com/${SSODOMAIN}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/lemonldap-ng.ini
+
+# force https if need
+sed -i "s/http:/${HTTPSCHEME}:/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/lemonldap-ng.ini
+sed -i "s/:80/:${HTTPPORT}/g"  /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/lemonldap-ng.ini
+
+#change URI if need
+sed -i "s/auth\.${SSODOMAIN}/${PORTAL_URI}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/lemonldap-ng.ini
+sed -i "s/manager\.${SSODOMAIN}/${MANAGER_URI}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/lemonldap-ng.ini
+sed -i "s/reload\.${SSODOMAIN}/${RELOAD_URI}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/lemonldap-ng.ini
+
+
+#echo update /var/lib/lemonldap-ng/conf/lmConf-1.json
+#cp -fp /usr/share/lemonldap-ng/assets/conf/lmConf-1.json /var/lib/lemonldap-ng/conf/lmConf-1.json
+sed -i "s/example\.com/${SSODOMAIN}/g" /var/lib/lemonldap-ng/conf/lmConf-1.json
+
+# force https if need
+sed -i "s/http:/${HTTPSCHEME}:/g" /var/lib/lemonldap-ng/conf/lmConf-1.json
+sed -i "s/:80/:${HTTPPORT}/g"  /var/lib/lemonldap-ng/conf/lmConf-1.json
+
+#change URI if need
+sed -i "s/auth\.${SSODOMAIN}/${PORTAL_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.json
+sed -i "s/manager\.${SSODOMAIN}/${MANAGER_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.json
+sed -i "s/reload\.${SSODOMAIN}/${RELOAD_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.json
+
+
+if [ ! -z "$CUSTOM_LOGO_URI" ]; then
+   curl -s $CUSTOM_LOGO_URI -o /var/lib/lemonldap-ng/common/logos/$(basename $CUSTOM_LOGO_URI)
 fi
 
+if [ ! -z "$CUSTOM_BACKGROUND_URI" ]; then
+   curl -s $CUSTOM_BACKGROUND_URI -o /var/lib/lemonldap-ng/common/backgrounds/$(basename $CUSTOM_BACKGROUND_URI)
 
-if [ ! -d /etc/lemonldap-ng/ori ]; then
-
-    echo 'update /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini'
-    mkdir /etc/lemonldap-ng/ori
-    cp /etc/lemonldap-ng/* /etc/lemonldap-ng/ori
-
-    sed -i "s/example\.com/${SSODOMAIN}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
-
-    # force https if need
-    sed -i "s/http:/${HTTPSCHEME}:/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
-    sed -i "s/:80/:${HTTPPORT}/g"  /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
-
-    #change URI if need
-    sed -i "s/auth\.${SSODOMAIN}/${PORTAL_URI}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
-    sed -i "s/manager\.${SSODOMAIN}/${MANAGER_URI}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
-    sed -i "s/reload\.${SSODOMAIN}/${RELOAD_URI}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/*.ini
-fi
-
-
-
-if [ ! -d /var/lib/lemonldap-ng/conf/ori ]; then
-    mkdir  /var/lib/lemonldap-ng/conf/ori
-    cp /var/lib/lemonldap-ng/conf/lmConf-1.js*  /var/lib/lemonldap-ng/conf/ori/
-
-    sed -i "s/example\.com/${SSODOMAIN}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
-
-    # force https if need
-    sed -i "s/http:/${HTTPSCHEME}:/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
-    sed -i "s/:80/:${HTTPPORT}/g"  /var/lib/lemonldap-ng/conf/lmConf-1.js*
-
-    #change URI if need
-    sed -i "s/auth\.${SSODOMAIN}/${PORTAL_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
-    sed -i "s/manager\.${SSODOMAIN}/${MANAGER_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
-    sed -i "s/reload\.${SSODOMAIN}/${RELOAD_URI}/g" /var/lib/lemonldap-ng/conf/lmConf-1.js*
+   if grep -q portalSkinBackground /etc/lemonldap-ng/lemonldap-ng.ini; then
+         sed -i "s/portalSkinBackground.*/portalSkinBackground =  $(basename $CUSTOM_BACKGROUND_URI)/" /etc/lemonldap-ng/lemonldap-ng.ini
+   else
+        startline=$(grep -n '\[portal\]' /etc/lemonldap-ng/lemonldap-ng.ini  | cut -d ':' -f1)
+        sed -i "$(($startline + 1))iportalSkinBackground =  $(basename $CUSTOM_BACKGROUND_URI)" /etc/lemonldap-ng/lemonldap-ng.ini
+   fi
 fi
 
 
