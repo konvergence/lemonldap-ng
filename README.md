@@ -4,6 +4,7 @@ Based on https://hub.docker.com/r/coudot/lemonldap-ng
 official web site :  https://lemonldap-ng.org/welcome/
 
 Add HTTPSCHEME to be able to make SSL Offloading
+if /etc/apache2/sites-enabled, rename default-ssl.conf to 001-default-ssl.conf to be sure to activate ssl before lemonldap conf
 
 define following variables on docker-compose.yml to fixe domain and URIs
 -    SSODOMAIN=example.com

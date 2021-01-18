@@ -12,12 +12,12 @@ ENV SSODOMAIN=example.com \
     HTTPS=on
 
 # Add Tini
-ARG TINI_VERSION="v0.18.0"
+ARG TINI_VERSION="v0.19.0"
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
 #  apt-cache madison lemonldap-ng
-ARG LLPNG_VERSION="2.0.7-1"
+ARG LLPNG_VERSION="2.0.9-1"
 
 # install perl and apache2
 RUN apt-get update \
@@ -42,6 +42,13 @@ RUN apt-get update \
 
 RUN echo "# Enable module ssl fcgid perl alias rewrite headers" \
     && a2enmod ssl fcgid perl alias rewrite headers
+
+
+
+RUN echo "# rename default-ssl.conf to 001-default-ssl.conf"; \
+    cd /etc/apache2/sites-available; \
+    mv default-ssl.conf 001-default-ssl.conf;
+
 
 ##&& echo "# Enable site for lemonldap-ng" \
 ##  && a2ensite manager-apache2.conf portal-apache2.conf handler-apache2.conf  test-apache2.conf

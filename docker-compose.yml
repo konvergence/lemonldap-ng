@@ -1,9 +1,9 @@
 version: '2'
 volumes:
-  lemonldapng-conf: {}
+#  lemonldapng-conf: {}
+#  lemonldapng-psessions: {}
   lemonldapng-etc: {}
-  lemonldapng-psessions: {}
-#  lemonldapng-var: {}
+  lemonldapng-var: {}
 services:
   lemonldapng:
 #    image: konvergence/lemonldap-ng
@@ -15,22 +15,28 @@ services:
     
     extra_hosts:
        - "reload.example.com:127.0.0.1"
+       - "manager-api.example.com:127.0.0.1"
  
     environment:
       SSODOMAIN: example.com
       PORTAL_URI: auth.example.com
       MANAGER_URI: manager.example.com
+      MANAGER_API_URI: manager-api.example.com
       RELOAD_URI: reload.example.com
+      HTTPSCHEME: 'http'
+      HTTPPORT: '80'
+      HTTPS: 'off'
 
       
     volumes:
-    - lemonldapng-psessions:/var/lib/lemonldap-ng/psessions
-    - lemonldapng-conf:/var/lib/lemonldap-ng/conf
+#    - lemonldapng-psessions:/var/lib/lemonldap-ng/psessions
+#    - lemonldapng-conf:/var/lib/lemonldap-ng/conf
     - lemonldapng-etc:/etc/lemonldap-ng
-#    - lemonldapng-var:/var/lib/lemonldap-ng
+    - lemonldapng-var:/var/lib/lemonldap-ng
     tty: true
     labels:
       io.rancher.container.pull_image: always
 
     ports:
+     - "80:80"
      - "443:443"

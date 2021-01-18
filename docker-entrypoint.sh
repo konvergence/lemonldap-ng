@@ -19,13 +19,13 @@ find /etc/apache2/sites-available/ -name '*.conf' ! -name '000-default.conf'  -e
 
 
 echo update /var/lib/lemonldap-ng/test/index.pl
-cp -fp /usr/share/lemonldap-ng/assets/test/index.pl /var/lib/lemonldap-ng/test/index.pl
+#cp -fp /usr/share/lemonldap-ng/assets/test/index.pl /var/lib/lemonldap-ng/test/index.pl
 sed  -i "s/auth\./$(echo ${PORTAL_URI} | cut -d '.' -f 1)\./g" /var/lib/lemonldap-ng/test/index.pl
 sed  -i "s/manager\./$(echo ${MANAGER_URI}  | cut -d '.' -f 1)\./g" /var/lib/lemonldap-ng/test/index.pl
 
 
 echo update /etc/lemonldap-ng/lemonldap-ng.ini and /etc/lemonldap-ng/*.conf
-cp -fp /usr/share/lemonldap-ng/assets/etc/* /etc/lemonldap-ng/
+#cp -fp /usr/share/lemonldap-ng/assets/etc/* /etc/lemonldap-ng/
 
 sed -i "s/example\.com/${SSODOMAIN}/g" /etc/lemonldap-ng/*.conf /etc/lemonldap-ng/lemonldap-ng.ini
 
